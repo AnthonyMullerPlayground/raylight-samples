@@ -20,14 +20,13 @@ public class Main {
 
 		// Perform '/about' call
 		About about = bi4.about();
-		System.out.println(about.getTitle());
-		System.out.println(about.getVersion());
+		System.out.println(about.getTitle() + " (" + about.getVersion() + ")\n");
 		
 		// Logon
 		bi4.logon("Administrator", "Password1");
 		
-		// Documents
-		List<Document> documents = bi4.documents();
+		// Documents		
+		List<Document> documents = bi4.documents(50 /* limit */, 0 /* offset */);
 		for (Document document : documents) {
 			System.out.println(document.getId() + "\t" + document.getCuid() + "\t" + document.getName());
 		}
