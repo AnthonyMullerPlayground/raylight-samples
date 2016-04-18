@@ -82,27 +82,33 @@ public class BI4EndPoint {
 	}
 	
 	public List<Document> documents(Integer limit, Integer offset) {
-		final Map<String, Object> options = new HashMap<>();
-		options.put("limit", limit);
-		options.put("offset", offset);
+		final Map<String, Object> queryParams = new HashMap<>();
+		queryParams.put("limit", limit);
+		queryParams.put("offset", offset);
 		
-		return documents(options);
+		return documents(queryParams);
 	}
 	
-	protected List<Document> documents(Map<String, Object> options) {		
-		Response response = buildRequest("raylight/v1/documents", options).get();		
+	protected List<Document> documents(Map<String, Object> queryParams) {		
+		Response response = buildRequest("raylight/v1/documents", null, queryParams).get();		
 		Documents root = response.readEntity(Documents.class);		
 		return root.documentList;
 	}
 	
-	public Document document(Integer id) {
-		Response response = buildRequest("raylight/v1/documents/" + id).get();		
+	public Document document(Integer documentId) {
+		final Map<String, Object> pathParams = new HashMap<>();
+		pathParams.put("documentId", documentId);
+		
+		Response response = buildRequest("raylight/v1/documents/{documentId}", pathParams, null).get();		
 		Document document = response.readEntity(Document.class);		
 		return  document;
 	}	
 
-	public List<Report> reports(Integer id) {
-		Response response = buildRequest("raylight/v1/documents/" + id + "/reports").get();
+	public List<Report> reports(Integer documentId) {
+		final Map<String, Object> pathParams = new HashMap<>();
+		pathParams.put("documentId", documentId);
+		
+		Response response = buildRequest("raylight/v1/documents/{documentId}/reports", pathParams, null).get();
 		
 		Reports root = response.readEntity(Reports.class);
 		return  root.reportList;
@@ -110,17 +116,26 @@ public class BI4EndPoint {
 
 	
 	private Invocation.Builder buildRequest(String request) {
-		return buildRequest(request, null);
+		return buildRequest(request, null, null);
 	}
 	
-	private Invocation.Builder buildRequest(String request, Map<String, Object> properties) {
+	private Invocation.Builder buildRequest(String request, Map<String, Object> pathParams, Map<String, Object> queryParams) {
 		WebTarget requestTarget = this.target.path(request);
 		
-		if(properties != null) {
-			for (String propertyName : properties.keySet()) {
-				Object propertyvalue = properties.get(propertyName);
-				if(propertyvalue != null) {
-					requestTarget = requestTarget.queryParam(propertyName, propertyvalue);	
+		if(pathParams != null) {
+			for (String parameterName : pathParams.keySet()) {
+				Object parameterValue = pathParams.get(parameterName);
+				if(parameterValue != null) { 
+					requestTarget = requestTarget.resolveTemplate(parameterName, parameterValue);	
+				}
+			}
+		}
+		
+		if(queryParams != null) {
+			for (String parameterName : queryParams.keySet()) {
+				Object parameterValue = queryParams.get(parameterName);
+				if(parameterValue != null) {
+					requestTarget = requestTarget.queryParam(parameterName, parameterValue);	
 				}
 			}	
 		}
