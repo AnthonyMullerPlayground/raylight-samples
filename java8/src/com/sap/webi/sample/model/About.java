@@ -6,6 +6,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class About {
 
 	private String title;
+	private String version;
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
 
 	public String getTitle() {
 		return title;
