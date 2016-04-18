@@ -9,6 +9,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class Documents {
 
-	@XmlElement(name="document")
+	@XmlElement(name = "document")
 	public List<Document> documentList = new ArrayList<>();
 }
