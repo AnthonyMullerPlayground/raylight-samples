@@ -18,6 +18,9 @@ import org.codehaus.jettison.json.JSONObject;
 import com.sap.webi.sample.model.About;
 import com.sap.webi.sample.model.Document;
 import com.sap.webi.sample.model.Documents;
+import com.sap.webi.sample.model.InfoObject;
+import com.sap.webi.sample.model.Report;
+import com.sap.webi.sample.model.Reports;
 
 public class BI4EndPoint {
 
@@ -49,6 +52,21 @@ public class BI4EndPoint {
 		return logonToken != null && !logonToken.isEmpty();
 	}
 
+	public InfoObject getInfoObject(String cuid) throws Exception {
+		Response response = buildRequest("infostore/cuid_" + cuid).get();
+		
+		String content = response.readEntity(String.class);		
+		JSONObject item = new JSONObject(content);
+		
+		InfoObject infoObject = new InfoObject();
+		infoObject.setId(item.getInt("id"));
+		infoObject.setCuid(item.getString("cuid"));
+		infoObject.setName(item.getString("name"));
+		infoObject.setDescription(item.getString("description"));
+		
+		return infoObject;
+	}
+	
 	public boolean logoff() {		
 		Response response = buildRequest("logoff").post(null);		
 		return response.getStatus() == 200;
@@ -77,27 +95,40 @@ public class BI4EndPoint {
 		return root.documentList;
 	}
 	
+	public Document document(Integer id) {
+		Response response = buildRequest("raylight/v1/documents/" + id).get();		
+		Document document = response.readEntity(Document.class);		
+		return  document;
+	}	
+
+	public List<Report> reports(Integer id) {
+		Response response = buildRequest("raylight/v1/documents/" + id + "/reports").get();
+		
+		Reports root = response.readEntity(Reports.class);
+		return  root.reportList;
+	}
+
+	
 	private Invocation.Builder buildRequest(String request) {
+		return buildRequest(request, null);
+	}
+	
+	private Invocation.Builder buildRequest(String request, Map<String, Object> properties) {
 		WebTarget requestTarget = this.target.path(request);
+		
+		if(properties != null) {
+			for (String propertyName : properties.keySet()) {
+				Object propertyvalue = properties.get(propertyName);
+				if(propertyvalue != null) {
+					requestTarget = requestTarget.queryParam(propertyName, propertyvalue);	
+				}
+			}	
+		}
+		
 		Invocation.Builder builder = requestTarget.request().accept(MediaType.APPLICATION_JSON);
 		if(logonToken != null) {
 			builder = builder.header(X_SAP_LOGON_TOKEN, logonToken);			
 		}
 		return builder;
 	}
-	
-	private Invocation.Builder buildRequest(String request, Map<String, Object> properties) {
-		WebTarget requestTarget = this.target.path(request);
-		for (String propertyName : properties.keySet()) {
-			Object propertyvalue = properties.get(propertyName);
-			if(propertyvalue != null) {
-				requestTarget = requestTarget.queryParam(propertyName, propertyvalue);	
-			}
-		}
-		Invocation.Builder builder = requestTarget.request().accept(MediaType.APPLICATION_JSON);
-		if(logonToken != null) {
-			builder = builder.header(X_SAP_LOGON_TOKEN, logonToken);			
-		}
-		return builder;
-	}	
 }

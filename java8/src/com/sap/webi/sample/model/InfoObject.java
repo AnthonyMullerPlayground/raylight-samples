@@ -1,16 +1,12 @@
 package com.sap.webi.sample.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
+public class InfoObject {
 
-@XmlRootElement
-public class Document {
-	
 	private Integer id;
 	private String cuid;
 	private String name;
 	private String description;
-	
-	
+	private String type;
 	public Integer getId() {
 		return id;
 	}
@@ -34,5 +30,11 @@ public class Document {
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
 	}
 }
