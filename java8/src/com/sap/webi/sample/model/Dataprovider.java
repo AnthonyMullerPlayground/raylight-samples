@@ -103,8 +103,9 @@ public class Dataprovider {
 	private String dataSourcePrefix;
 	private String dataSourceType;
 	private Date updated;
-	
-	
+	private Integer flowCount;
+
+
 	public String getId() {
 		return id;
 	}
@@ -151,5 +152,13 @@ public class Dataprovider {
 
 	public void setUpdated(Date updated) {
 		this.updated = updated;
-	}	
+	}
+	
+	public Integer getFlowCount() {
+		return flowCount;
+	}
+
+	public void setFlowCount(Integer flowCount) {
+		this.flowCount = flowCount;
+	}
 }

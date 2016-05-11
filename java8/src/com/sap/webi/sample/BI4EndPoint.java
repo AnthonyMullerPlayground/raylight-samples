@@ -92,7 +92,7 @@ public class BI4EndPoint {
 	}
 	
 	protected List<Document> documents(Map<String, Object> queryParams) {		
-		Response response = buildRequest("raylight/v1/documents", null, queryParams).get();		
+		Response response = buildRequest(new BuildRequestParameter("raylight/v1/documents", null, queryParams)).get();		
 		Documents root = response.readEntity(Documents.class);		
 		return root.documentList;
 	}
@@ -101,7 +101,7 @@ public class BI4EndPoint {
 		final Map<String, Object> pathParams = new HashMap<>();
 		pathParams.put("documentId", documentId);
 		
-		Response response = buildRequest("raylight/v1/documents/{documentId}", pathParams, null).get();		
+		Response response = buildRequest(new BuildRequestParameter("raylight/v1/documents/{documentId}", pathParams, null)).get();		
 		Document document = response.readEntity(Document.class);		
 		return  document;
 	}	
@@ -110,7 +110,7 @@ public class BI4EndPoint {
 		final Map<String, Object> pathParams = new HashMap<>();
 		pathParams.put("documentId", documentId);
 		
-		Response response = buildRequest("raylight/v1/documents/{documentId}/reports", pathParams, null).get();
+		Response response = buildRequest(new BuildRequestParameter("raylight/v1/documents/{documentId}/reports", pathParams, null)).get();
 		
 		Reports root = response.readEntity(Reports.class);
 		return  root.reportList;
@@ -120,7 +120,7 @@ public class BI4EndPoint {
 		final Map<String, Object> pathParams = new HashMap<>();
 		pathParams.put("documentId", documentId);
 		
-		Response response = buildRequest("raylight/v1/documents/{documentId}/dataproviders", pathParams, null).get();
+		Response response = buildRequest(new BuildRequestParameter("raylight/v1/documents/{documentId}/dataproviders", pathParams, null)).get();
 		
 		Dataproviders root = response.readEntity(Dataproviders.class);
 
@@ -132,41 +132,98 @@ public class BI4EndPoint {
 		pathParams.put("documentId", documentId);
 		pathParams.put("dataproviderId", dataproviderId);
 		
-		Response response = buildRequest("raylight/v1/documents/{documentId}/dataproviders/{dataproviderId}", pathParams, null).get();
+		Response response = buildRequest(new BuildRequestParameter("raylight/v1/documents/{documentId}/dataproviders/{dataproviderId}", pathParams, null)).get();
 		
 		Dataprovider dataprovider = response.readEntity(Dataprovider.class);
 
 		return  dataprovider;
 	}
 	
-
-	
-	private Invocation.Builder buildRequest(String request) {
-		return buildRequest(request, null, null);
+	public String flowXml(Integer documentId, String dataproviderId, Integer flowId) {
+		return flow(documentId, dataproviderId, flowId, MediaType.TEXT_XML_TYPE);
 	}
 	
-	private Invocation.Builder buildRequest(String request, Map<String, Object> pathParams, Map<String, Object> queryParams) {
-		WebTarget requestTarget = this.target.path(request);
+	public String flowTxt(Integer documentId, String dataproviderId, Integer flowId) {
+		return flow(documentId, dataproviderId, flowId, MediaType.TEXT_PLAIN_TYPE);
+	}
+	
+	private String flow(Integer documentId, String dataproviderId, Integer flowId, MediaType flowMediaType) {
+		final Map<String, Object> pathParams = new HashMap<>();
+		pathParams.put("documentId", documentId);
+		pathParams.put("dataproviderId", dataproviderId);
+		pathParams.put("flowId", flowId);
 		
-		if(pathParams != null) {
-			for (String parameterName : pathParams.keySet()) {
-				Object parameterValue = pathParams.get(parameterName);
+		BuildRequestParameter requestParameter = new BuildRequestParameter(
+				"raylight/v1/documents/{documentId}/dataproviders/{dataproviderId}/flows/{flowId}", pathParams, null
+		);
+		requestParameter.setAccept(flowMediaType);
+		Response response = buildRequest(requestParameter).get();
+	
+		return response.readEntity(String.class);
+	}
+	
+
+	
+	private class BuildRequestParameter
+	{
+		private String request;
+		private Map<String, Object> pathParams;
+		private Map<String, Object> queryParams;
+		private MediaType accept = MediaType.APPLICATION_JSON_TYPE;
+		
+		public BuildRequestParameter(String request, Map<String, Object> pathParams, Map<String, Object> queryParams) {
+			this.request = request;
+			this.pathParams = pathParams;
+			this.queryParams = queryParams;
+		}
+
+		public MediaType getAccept() {
+			return accept;
+		}
+		
+		public void setAccept(MediaType acceptType) {
+			this.accept = acceptType;
+		}
+
+		public String getRequest() {
+			return request;
+		}
+
+		public Map<String, Object> getPathParams() {
+			return pathParams;
+		}
+
+		public Map<String, Object> getQueryParams() {
+			return queryParams;
+		}
+	}
+	
+	private Invocation.Builder buildRequest(String request) {
+		return buildRequest(new BuildRequestParameter(request, null, null));
+	}
+	
+	private Invocation.Builder buildRequest(BuildRequestParameter parameterObject) {
+		WebTarget requestTarget = this.target.path(parameterObject.getRequest());
+		
+		if(parameterObject.getPathParams() != null) {
+			for (String parameterName : parameterObject.getPathParams().keySet()) {
+				Object parameterValue = parameterObject.getPathParams().get(parameterName);
 				if(parameterValue != null) { 
 					requestTarget = requestTarget.resolveTemplate(parameterName, parameterValue);	
 				}
 			}
 		}
 		
-		if(queryParams != null) {
-			for (String parameterName : queryParams.keySet()) {
-				Object parameterValue = queryParams.get(parameterName);
+		if(parameterObject.getQueryParams() != null) {
+			for (String parameterName : parameterObject.getQueryParams().keySet()) {
+				Object parameterValue = parameterObject.getQueryParams().get(parameterName);
 				if(parameterValue != null) {
 					requestTarget = requestTarget.queryParam(parameterName, parameterValue);	
 				}
 			}	
 		}
 		
-		Invocation.Builder builder = requestTarget.request().accept(MediaType.APPLICATION_JSON);
+		Invocation.Builder builder = requestTarget.request().accept(parameterObject.getAccept());
 		if(logonToken != null) {
 			builder = builder.header(X_SAP_LOGON_TOKEN, logonToken);			
 		}

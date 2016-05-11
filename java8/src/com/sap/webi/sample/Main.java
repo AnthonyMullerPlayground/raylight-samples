@@ -72,7 +72,10 @@ public class Main {
 			Dataprovider dataprovider = dataproviders.get(0);
 			System.out.println("== dataprovider '" + dataprovider.getName() + "' details ==");
 			dataprovider = bi4.dataprovider(document.getId(), dataprovider.getId());
-			System.out.println(dataprovider.getId() + "\t" + dataprovider.getDataSourceId() + "\t" + dataprovider.getDataSourceType() + "\t" + dataprovider.getUpdated());	
+			System.out.println(dataprovider.getId() + "\t" + dataprovider.getDataSourceId() + "\t" + dataprovider.getDataSourceType() + "\t" + dataprovider.getUpdated() + "\t" + dataprovider.getFlowCount());
+			if(dataprovider.getFlowCount() > 0) {
+				System.out.println(bi4.flowTxt(document.getId(), dataprovider.getId(), 0));	
+			}
 			System.out.println();
 		}
 		
