@@ -16,6 +16,8 @@ import org.apache.cxf.jaxrs.provider.json.JSONProvider;
 import org.codehaus.jettison.json.JSONObject;
 
 import com.sap.webi.sample.model.About;
+import com.sap.webi.sample.model.Dataprovider;
+import com.sap.webi.sample.model.Dataproviders;
 import com.sap.webi.sample.model.Document;
 import com.sap.webi.sample.model.Documents;
 import com.sap.webi.sample.model.InfoObject;
@@ -113,6 +115,30 @@ public class BI4EndPoint {
 		Reports root = response.readEntity(Reports.class);
 		return  root.reportList;
 	}
+	
+	public List<Dataprovider> dataproviders(Integer documentId) {
+		final Map<String, Object> pathParams = new HashMap<>();
+		pathParams.put("documentId", documentId);
+		
+		Response response = buildRequest("raylight/v1/documents/{documentId}/dataproviders", pathParams, null).get();
+		
+		Dataproviders root = response.readEntity(Dataproviders.class);
+
+		return  root.dataproviderList;
+	}
+	
+	public Dataprovider dataprovider(Integer documentId, String dataproviderId) {
+		final Map<String, Object> pathParams = new HashMap<>();
+		pathParams.put("documentId", documentId);
+		pathParams.put("dataproviderId", dataproviderId);
+		
+		Response response = buildRequest("raylight/v1/documents/{documentId}/dataproviders/{dataproviderId}", pathParams, null).get();
+		
+		Dataprovider dataprovider = response.readEntity(Dataprovider.class);
+
+		return  dataprovider;
+	}
+	
 
 	
 	private Invocation.Builder buildRequest(String request) {
