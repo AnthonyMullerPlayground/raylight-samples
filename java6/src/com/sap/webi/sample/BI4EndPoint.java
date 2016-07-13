@@ -299,7 +299,6 @@ public class BI4EndPoint {
 			for (String parameterName : parameterObject.getQueryParams().keySet()) {
 				Object parameterValue = parameterObject.getQueryParams().get(parameterName);
 				if(parameterValue != null) {
-					//requestTarget = requestTarget.queryParam(parameterName, parameterValue);
 					requestClient = requestClient.query(parameterName, parameterValue);
 				}
 			}	
