@@ -16,7 +16,7 @@ public class GetData {
 	private final static String USER = "Administrator";
 	private final static String PASSWORD = "Password1";
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 
 		final BI4EndPoint bi4 = new BI4EndPoint(BI4_API_ROOT_URL);
 		bi4.logon(USER, PASSWORD);
@@ -55,7 +55,7 @@ public class GetData {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String getDataFromDataProvider(String logonToken, String documentCuid, String dpId, int flowId, String format) throws Exception {
+	public static String getDataFromDataProvider(String logonToken, String documentCuid, String dpId, int flowId, String format) {
 		
 		final BI4EndPoint bi4 = new BI4EndPoint(BI4_API_ROOT_URL);
 		bi4.setLogonToken(logonToken);
@@ -85,7 +85,7 @@ public class GetData {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String getDataFromReportPart(String logonToken, String documentCuid, int reportId, int elementId, String format) throws Exception {
+	public static String getDataFromReportPart(String logonToken, String documentCuid, int reportId, int elementId, String format) {
 		
 		final BI4EndPoint bi4 = new BI4EndPoint(BI4_API_ROOT_URL);
 		bi4.setLogonToken(logonToken);

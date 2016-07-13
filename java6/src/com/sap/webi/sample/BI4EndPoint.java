@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.provider.json.JSONProvider;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import com.sap.webi.sample.model.About;
@@ -29,7 +30,7 @@ import com.sap.webi.sample.model.Reports;
 
 public class BI4EndPoint {
 
-	private static final String X_SAP_LOGON_TOKEN = "X-SAP-LogonToken";
+	public static final String X_SAP_LOGON_TOKEN = "X-SAP-LogonToken";
 
 	
 	private final WebClient client;
@@ -51,13 +52,18 @@ public class BI4EndPoint {
 		this.logonToken = logonToken;		
 	}
 	
-	public boolean logon(String userName, String password) throws Exception {
+	public boolean logon(String userName, String password) {
 		Response response = buildRequest("logon/long").get();
 		String content = response.readEntity(String.class);
 		
-		JSONObject credentials = new JSONObject(content);
-		credentials.put("userName", userName);
-		credentials.put("password", password);
+		JSONObject credentials;
+		try {
+			credentials = new JSONObject(content);
+			credentials.put("userName", userName);
+			credentials.put("password", password);
+		} catch (JSONException e) {
+			throw new BI4Exception(e);
+		}
 	
 		response = buildRequest("logon/long").post(Entity.entity(credentials.toString(), MediaType.APPLICATION_JSON));
 		logonToken = response.getHeaderString(X_SAP_LOGON_TOKEN);
@@ -65,17 +71,22 @@ public class BI4EndPoint {
 		return logonToken != null && !logonToken.isEmpty();
 	}
 
-	public InfoObject getInfoObject(String cuid) throws Exception {
+	public InfoObject getInfoObject(String cuid) {
 		Response response = buildRequest("infostore/cuid_" + cuid).get();
 		
-		String content = response.readEntity(String.class);		
-		JSONObject item = new JSONObject(content);
+		String content = response.readEntity(String.class);
 		
-		InfoObject infoObject = new InfoObject();
-		infoObject.setId(item.getInt("id"));
-		infoObject.setCuid(item.getString("cuid"));
-		infoObject.setName(item.getString("name"));
-		infoObject.setDescription(item.getString("description"));
+		InfoObject infoObject = new InfoObject();;
+		try {
+			JSONObject item = new JSONObject(content);		
+
+			infoObject.setId(item.getInt("id"));
+			infoObject.setCuid(item.getString("cuid"));
+			infoObject.setName(item.getString("name"));
+			infoObject.setDescription(item.getString("description"));
+		} catch (JSONException e) {
+			throw new BI4Exception(e);
+		}
 		
 		return infoObject;
 	}

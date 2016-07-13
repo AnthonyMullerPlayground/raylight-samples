@@ -22,7 +22,7 @@ public class Main {
 	private final static String USER = "Administrator";
 	private final static String PASSWORD = "Password1";
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		
 		final BI4EndPoint bi4 = new BI4EndPoint(BI4_API_ROOT_URL);
 
