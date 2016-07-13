@@ -20,6 +20,8 @@ import com.sap.webi.sample.model.Dataprovider;
 import com.sap.webi.sample.model.Dataproviders;
 import com.sap.webi.sample.model.Document;
 import com.sap.webi.sample.model.Documents;
+import com.sap.webi.sample.model.Element;
+import com.sap.webi.sample.model.Elements;
 import com.sap.webi.sample.model.InfoObject;
 import com.sap.webi.sample.model.Report;
 import com.sap.webi.sample.model.Reports;
@@ -38,6 +40,14 @@ public class BI4EndPoint {
 		Client client = ClientBuilder.newClient();
 		client.register(JSONProvider.class);
 		target = client.target(url);
+	}
+	
+	public String getLogonToken() {
+		return logonToken;
+	}
+
+	public void setLogonToken(String logonToken) {
+		this.logonToken = logonToken;		
 	}
 	
 	public boolean logon(String userName, String password) throws Exception {
@@ -114,6 +124,62 @@ public class BI4EndPoint {
 		
 		Reports root = response.readEntity(Reports.class);
 		return  root.reportList;
+	}
+
+	public Report report(Integer documentId, Integer reportId) {
+		final Map<String, Object> pathParams = new HashMap<>();
+		pathParams.put("documentId", documentId);
+		pathParams.put("reportId", reportId);
+		
+		Response response = buildRequest(new BuildRequestParameter("raylight/v1/documents/{documentId}/reports/{reportId}", pathParams, null)).get();
+		
+		Report report = response.readEntity(Report.class); 
+		return  report;
+	}
+	
+	public List<Element> elements(Integer documentId, Integer reportId) {
+		final Map<String, Object> pathParams = new HashMap<>();
+		pathParams.put("documentId", documentId);
+		pathParams.put("reportId", reportId);
+		
+		Response response = buildRequest(new BuildRequestParameter("raylight/v1/documents/{documentId}/reports/{reportId}/elements", pathParams, null)).get();
+		
+		Elements root = response.readEntity(Elements.class);
+		return  root.elementList;
+	}
+	
+	public Element element(Integer documentId, Integer reportId, Integer elementId) {
+		final Map<String, Object> pathParams = new HashMap<>();
+		pathParams.put("documentId", documentId);
+		pathParams.put("reportId", reportId);
+		pathParams.put("elementId", elementId);
+		
+		Response response = buildRequest(new BuildRequestParameter("raylight/v1/documents/{documentId}/reports/{reportId}/elements/{elementId}", pathParams, null)).get();
+		
+		Element element = response.readEntity(Element.class); 
+		return  element;
+	}
+	
+	public String datasetXml(Integer documentId, Integer reportId, Integer elementId) {
+		return dataset(documentId, reportId, elementId, MediaType.APPLICATION_XML_TYPE);
+	}
+	
+	public String datasetJson(Integer documentId, Integer reportId, Integer elementId) {
+		return dataset(documentId, reportId, elementId, MediaType.APPLICATION_JSON_TYPE);
+	}
+	
+	private String dataset(Integer documentId, Integer reportId, Integer elementId, MediaType flowMediaType) {
+		final Map<String, Object> pathParams = new HashMap<>();
+		pathParams.put("documentId", documentId);
+		pathParams.put("reportId", reportId);
+		pathParams.put("elementId", elementId);
+		
+		BuildRequestParameter requestParameter = new BuildRequestParameter("raylight/v1/documents/{documentId}/reports/{reportId}/elements/{elementId}/dataset", pathParams, null);
+		
+		requestParameter.setAccept(flowMediaType);
+		Response response = buildRequest(requestParameter).get();
+	
+		return response.readEntity(String.class);
 	}
 	
 	public List<Dataprovider> dataproviders(Integer documentId) {
