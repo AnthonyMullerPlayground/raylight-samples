@@ -146,11 +146,8 @@ public class BI4EndPoint {
 		
 		Response response = buildRequest(new BuildRequestParameter("raylight/v1/documents/{documentId}/reports/{reportId}/elements", pathParams, null)).get();
 		
-		//System.out.println(response.readEntity(String.class));
-		
 		Elements root = response.readEntity(Elements.class);
 		return  root.elementList;
-		//return null;
 	}
 	
 	public Element element(Integer documentId, Integer reportId, Integer elementId) {
