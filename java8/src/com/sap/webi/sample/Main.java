@@ -15,7 +15,7 @@ import com.sap.webi.sample.model.Report;
  */
 public class Main {
 
-	private final static String BI4_API_ROOT_URL = "http://dewdftv01222.dhcp.pgdev.sap.corp:6405/biprws";
+	private final static String BI4_API_ROOT_URL = "http://localhost:6405/biprws";
 	
 	private final static String FORMATTING_SAMPLE_CUID = "AQtkbbSqN4NOj3ydf.Sw1lY";
 	
