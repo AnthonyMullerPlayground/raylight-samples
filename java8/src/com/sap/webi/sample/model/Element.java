@@ -3,6 +3,8 @@ package com.sap.webi.sample.model;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.sap.webi.sample.model.element.Content;
+
 @XmlRootElement
 public class Element {
 
@@ -10,6 +12,8 @@ public class Element {
 	private String name;
 	private String reference;
 	private String type;
+	private Integer parentId;
+	private Content content;
 
 	public Integer getId() {
 		return id;
@@ -37,5 +41,17 @@ public class Element {
 	
 	public void setType(String type) {
 		this.type = type;
+	}
+	public Integer getParentId() {
+		return parentId;
+	}
+	public void setParentId(Integer parentId) {
+		this.parentId = parentId;
+	}
+	public Content getContent() {
+		return content;
+	}
+	public void setContent(Content content) {
+		this.content = content;
 	}
 }

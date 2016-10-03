@@ -104,7 +104,7 @@ public class Dataprovider {
 	private String dataSourceType;
 	private Date updated;
 	private Integer flowCount;
-
+	private Dictionary dictionary;
 
 	public String getId() {
 		return id;
@@ -160,5 +160,13 @@ public class Dataprovider {
 
 	public void setFlowCount(Integer flowCount) {
 		this.flowCount = flowCount;
+	}
+
+	public Dictionary getDictionary() {
+		return dictionary;
+	}
+
+	public void setDictionary(Dictionary dictionary) {
+		this.dictionary = dictionary;
 	}
 }

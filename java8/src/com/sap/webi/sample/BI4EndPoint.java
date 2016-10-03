@@ -26,6 +26,8 @@ import com.sap.webi.sample.model.Elements;
 import com.sap.webi.sample.model.InfoObject;
 import com.sap.webi.sample.model.Report;
 import com.sap.webi.sample.model.Reports;
+import com.sap.webi.sample.model.Variable;
+import com.sap.webi.sample.model.Variables;
 
 public class BI4EndPoint {
 
@@ -215,6 +217,20 @@ public class BI4EndPoint {
 		return  dataprovider;
 	}
 	
+	public String querySpecification(Integer documentId, String dataproviderId) {
+		final Map<String, Object> pathParams = new HashMap<>();
+		pathParams.put("documentId", documentId);
+		pathParams.put("dataproviderId", dataproviderId);
+		
+		BuildRequestParameter requestParameter = new BuildRequestParameter(
+				"raylight/v1/documents/{documentId}/dataproviders/{dataproviderId}/specification", pathParams, null
+		);
+		requestParameter.setAccept(MediaType.TEXT_XML_TYPE);
+		Response response = buildRequest(requestParameter).get();
+	
+		return response.readEntity(String.class);
+	}
+	
 	public String flowXml(Integer documentId, String dataproviderId, Integer flowId) {
 		return flow(documentId, dataproviderId, flowId, MediaType.TEXT_XML_TYPE);
 	}
@@ -238,6 +254,27 @@ public class BI4EndPoint {
 		return response.readEntity(String.class);
 	}
 	
+	
+	public List<Variable> variables(Integer documentId) {
+		final Map<String, Object> pathParams = new HashMap<>();
+		pathParams.put("documentId", documentId);
+		
+		Response response = buildRequest(new BuildRequestParameter("raylight/v1/documents/{documentId}/variables", pathParams, null)).get();
+		
+		Variables root = response.readEntity(Variables.class);
+		return  root.variableList;
+	}
+	
+	public Variable variable(Integer documentId, String variableId) {
+		final Map<String, Object> pathParams = new HashMap<>();
+		pathParams.put("documentId", documentId);
+		pathParams.put("variableId", variableId);
+		
+		Response response = buildRequest(new BuildRequestParameter("raylight/v1/documents/{documentId}/variables/{variableId}", pathParams, null)).get();
+		
+		Variable variable = response.readEntity(Variable.class);
+		return  variable;
+	}
 
 	
 	private class BuildRequestParameter
